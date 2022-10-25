@@ -25,13 +25,11 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
-      - name: Install Python pip-tools
-        run: pip install pip-tools
-      - name: Install Python dependencies
-        run: pip-sync requirements.txt requirements-dev.txt
-      - name: isort check
-        run: isort --check-only --diff --show-config . >> $GITHUB_OUTPUT
+      - name: Install Python code checking dependencies
+        run: pip install black pylint flake8 isort
+      # - name: isort check
+      #   run: isort --check-only --diff .
       - name: black check
-        run: black --diff --check $(git ls-files '*.py') >> $GITHUB_OUTPUT
+        run: black --diff --check $(git ls-files '*.py')
       - name: pylint check
-        run: pylint --disable=all --enable=unused-import $(git ls-files '*.py') >> $GITHUB_OUTPUT
+        run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
