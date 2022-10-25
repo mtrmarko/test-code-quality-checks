@@ -25,7 +25,8 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
-      # Checks if all the import statements are sorted properly
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt requirements-dev.txt
       - name: isort check
         run: isort --check-only --diff --show-config .
       - name: black check
