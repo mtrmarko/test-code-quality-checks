@@ -33,7 +33,7 @@ jobs:
       - uses: marian-code/python-lint-annotate@v3
         with:
           #python-root-list: ${{ env.CHANGED_FILES }}
-          python-root-list: "."
+          #python-root-list: "."
           use-black: true
           use-isort: true
           use-pylint: true
