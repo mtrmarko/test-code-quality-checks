@@ -29,7 +29,7 @@ jobs:
         run: pip install black pylint flake8 isort
       - name: isort check
         id: isort-check
-        run: isort --check-only --diff .
+        run: isort --check-only --diff . 2> $GITHUB_OUTPUT
         continue-on-error: true
       - name: black check
         id: black-check
@@ -49,4 +49,5 @@ jobs:
         if: steps.isort-check.outcome != 'success' || steps.black-check.outcome != 'success' || steps.pylint-check.outcome != 'success' || steps.flake8-check.outcome != 'success'
         run: |
           echo "::error::Blah your code quality is terrible"
+          echo ${{ steps.issort-check.outputs.stderr }}
           exit 1
