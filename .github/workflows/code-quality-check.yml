@@ -1,0 +1,32 @@
+# Github action that checks Python code quality.
+# Action is fired on PR open against dev branch,
+# when new commit is pushed against branch that
+# has PR open to dev branch and on actual push
+# to dev branch (if someone skips the PR process).
+
+name: Run code quality checks
+on:
+  # pull_request_target:
+  #   branches: [main]
+  #   types: [opened, synchronize]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  code-quality-check:
+    name: Perform python code quality check
+    #runs-on: [self-hosted, cicd-runner]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      # Checks if all the import statements are sorted properly
+      - name: isort check
+        uses: isort/isort-action@master
+        with:
+            requirementsFiles: "requirements.txt dev-requirements.txt"

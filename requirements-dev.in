@@ -1,0 +1,6 @@
+black
+isort
+pylint
+flake8-print
+flake8
+pip-tools
