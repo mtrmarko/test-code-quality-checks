@@ -17,6 +17,7 @@ jobs:
   code-quality-check:
     name: Perform python code quality check
     #runs-on: [self-hosted, cicd-runner]
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
