@@ -39,3 +39,5 @@ jobs:
       - name: flake8 check
         run: flake8 $(git ls-files '*.py')
         continue-on-error: true
+      - name: Final code quality status
+        run: echo "::error::Blah your code quality is terrible"
