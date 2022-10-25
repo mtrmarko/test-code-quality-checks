@@ -20,13 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10"
       # Checks if all the import statements are sorted properly
       - name: isort check
-        uses: isort/isort-action@master
-        with:
-            requirementsFiles: "requirements.txt dev-requirements.txt"
+        run: isort --check-only --diff --show-config .
+      - name: black check
+        run: black --diff --check $(git ls-files '*.py')
+      - name: pylint check
+        run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
