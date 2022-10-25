@@ -17,7 +17,6 @@ jobs:
   code-quality-check:
     name: Perform python code quality check
     #runs-on: [self-hosted, cicd-runner]
-    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -30,9 +29,13 @@ jobs:
         run: pip install black pylint flake8 isort
       - name: isort check
         run: isort --check-only --diff .
+        continue-on-error: true
       - name: black check
         run: black --diff --check $(git ls-files '*.py')
+        continue-on-error: true
       - name: pylint check
         run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
+        continue-on-error: true
       - name: flake8 check
         run: flake8 $(git ls-files '*.py')
+        continue-on-error: true
