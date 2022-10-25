@@ -28,16 +28,25 @@ jobs:
       - name: Install Python code checking dependencies
         run: pip install black pylint flake8 isort
       - name: isort check
+        id: isort-check
         run: isort --check-only --diff .
         continue-on-error: true
       - name: black check
+        id: black-check
         run: black --diff --check $(git ls-files '*.py')
         continue-on-error: true
       - name: pylint check
+        id: pylint-check
         run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
         continue-on-error: true
       - name: flake8 check
+        id: flake8-check
         run: flake8 $(git ls-files '*.py')
         continue-on-error: true
-      - name: Final code quality status
-        run: echo "::error::Blah your code quality is terrible"
+      # - name: Final code quality status
+      #   run: echo "::error::Blah your code quality is terrible"
+      - name: Final status
+        if: steps.isort-check.outcome != 'success' || steps.black-check.outcome != 'success' || steps.pylint-check.outcome != 'success' || steps.flake8-check.outcome != 'success'
+        run: |
+          echo "::error::Blah your code quality is terrible"
+          exit 1
