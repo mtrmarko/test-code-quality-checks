@@ -29,7 +29,7 @@ jobs:
         run: pip install black pylint flake8 isort
       # - name: isort check
       #   run: isort --check-only --diff .
-      - name: black check
-        run: black --diff --check $(git ls-files '*.py')
+      # - name: black check
+      #   run: black --diff --check $(git ls-files '*.py')
       - name: pylint check
         run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
