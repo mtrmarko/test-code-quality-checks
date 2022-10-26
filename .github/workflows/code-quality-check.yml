@@ -35,7 +35,8 @@ jobs:
       #   run: >
       #     echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- | grep \.py))" >> $GITHUB_ENV
       #- if: ${{ env.CHANGED_FILES }}
-      - id: test-marko
+      - name: isort check
+        id: isort-check
         #uses: marian-code/python-lint-annotate@v3
         # This runs various Python code checks and adds Github Action annotation.
         # See https://fusectore.dev/2021/11/19/github-action-problem-matchers.html
@@ -43,23 +44,21 @@ jobs:
           echo "::add-matcher::.github/workflows/matchers/isort.json"
           echo "::add-matcher::.github/workflows/matchers/isort_severity.json"
           isort --check-only --diff .
-          isort_exit_code=$?
-          if [ "$isort_exit_code" = "0" ]; then
-              echo "isort ok"
-          else
-              echo "isort error"
-          fi
           echo "::remove-matcher owner=isort::"
           echo "::remove-matcher owner=isort_severity::"
-
+        continue-on-error: true
+      - name: black check
+        id: black-check
+        run: |
           echo "::add-matcher::.github/workflows/matchers/black.json"
           echo "::add-matcher::.github/workflows/matchers/black_severity.json"
           black --diff --check .
-          black_exit_code=$?
-          if [ "$black_exit_code" = "0" ]; then
-              echo "black ok"
-          else
-              echo "black error"
-          fi
           echo "::remove-matcher owner=black::"
           echo "::remove-matcher owner=black_severity::"
+        continue-on-error: true
+      - name: Final status
+        id: final-status
+        if: steps.isort-check.outcome != 'success' || steps.black-check.outcome != 'success' #|| steps.pylint-check.outcome != 'success' || steps.flake8-check.outcome != 'success'
+        run: |
+          echo "::error::At least one check failed. Review annotations and logs for more info"
+          exit 1
