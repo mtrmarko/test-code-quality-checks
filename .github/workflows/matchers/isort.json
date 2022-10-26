@@ -1,6 +1,8 @@
 {
     "problemMatcher": [
       {
+        "owner": "isort",
+        "severity": "error",
         "pattern": [
           {
             "regexp": "^(\\S*): (\\S*) (.*)$",
@@ -8,10 +10,10 @@
             "severity": 1,
             "message": 3
           }
-        ],
-        "owner": "isort"
+        ]
       },
       {
+        "owner": "isort_severity",
         "pattern": [
           {
             "regexp": "^#{0,2}\\[([a-z]*)\\](\\S*): (\\S*) (.*)$",
@@ -19,8 +21,7 @@
             "severity": 1,
             "message": 4
           }
-        ],
-        "owner": "isort_severity"
+        ]
       }
     ]
   }

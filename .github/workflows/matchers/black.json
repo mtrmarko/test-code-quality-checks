@@ -1,7 +1,8 @@
 {
   "problemMatcher": [
     {
-      "severity": "warning",
+      "owner": "black",
+      "severity": "error",
       "column": 1,
       "line": 1,
       "code": "W",
@@ -11,10 +12,10 @@
           "file": 2,
           "message": 1
         }
-      ],
-      "owner": "black"
+      ]
     },
     {
+      "owner": "black_severity",
       "column": 1,
       "line": 1,
       "code": "W",
@@ -25,8 +26,7 @@
           "file": 3,
           "message": 2
         }
-      ],
-      "owner": "black_severity"
+      ]
     }
   ]
 }
