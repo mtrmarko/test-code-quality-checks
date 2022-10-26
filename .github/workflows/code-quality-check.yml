@@ -36,4 +36,4 @@ jobs:
       - id: test-marko
         #uses: marian-code/python-lint-annotate@v3
         run: |
-          echo $CWD
+          echo "::error::$CWD $PWD"
