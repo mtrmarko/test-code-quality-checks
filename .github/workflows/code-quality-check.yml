@@ -52,3 +52,14 @@ jobs:
           echo "::remove-matcher owner=isort::"
           echo "::remove-matcher owner=isort_severity::"
 
+          echo "::add-matcher::.github/workflows/matchers/black.json"
+          echo "::add-matcher::.github/workflows/matchers/black_severity.json"
+          black --diff --check .
+          black_exit_code=$?
+          if [ "$black_exit_code" = "0" ]; then
+              echo "black ok"
+          else
+              echo "black error"
+          fi
+          echo "::remove-matcher owner=black::"
+          echo "::remove-matcher owner=black_severity::"
