@@ -80,7 +80,7 @@ jobs:
         continue-on-error: true
       - name: Final status
         id: final-status
-        if: steps.isort-check.outcome != 'success' || steps.black-check.outcome != 'success' || steps.pylint-check.outcome != 'success' || steps.flake8-check.outcome != 'success'
+        if: steps.isort-check.outcome == 'failure' || steps.black-check.outcome == 'failure' || steps.pylint-check.outcome == 'failure' || steps.flake8-check.outcome == 'failure'
         run: |
           echo "::error::At least one check failed. Review annotations and logs for more info"
           exit 1
