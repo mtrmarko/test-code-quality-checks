@@ -33,7 +33,7 @@ jobs:
         id: get-changed-python-files-on-push
         if: github.event_name == 'push'
         run: >
-          echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.before }}..${{ github.event.after }} -- | grep \.py))" >> $GITHUB_ENV
+          echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.before }}..${{ github.event.after }} -- | grep \.py$))" >> $GITHUB_ENV
       - name: Get changed python files on PR
         id: get-changed-python-files-on-pr
         if: github.event_name == 'pull_request_target'
@@ -65,7 +65,8 @@ jobs:
         if: ${{ env.CHANGED_FILES }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
-          pylint ${{ env.CHANGED_FILES }}
+          #pylint --rcfile .pylintrc ${{ env.CHANGED_FILES }}
+          pylint --rcfile .pylintrc test.py
           echo "::remove-matcher owner=pylint-warning::"
           echo "::remove-matcher owner=pylint-error::"
         continue-on-error: true
