@@ -30,7 +30,7 @@ jobs:
         run: >
           echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.before }}..${{ github.event.after }} -- | grep \.py))" >> $GITHUB_ENV
       - if: ${{ env.CHANGED_FILES }}
-      - uses: marian-code/python-lint-annotate@v3
+        uses: marian-code/python-lint-annotate@v3
         with:
           #python-root-list: ${{ env.CHANGED_FILES }}
           #python-root-list: "."
