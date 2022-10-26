@@ -1,22 +1,23 @@
-# Github action that checks Python code quality.
-# Action is fired on PR open against dev branch,
-# when new commit is pushed against branch that
-# has PR open to dev branch and on actual push
+# Github action that checks Python code quality. Action is fired on PR open against dev branch,
+# when new commit is pushed against branch that has PR open to dev branch, and on actual push
 # to dev branch (if someone skips the PR process).
+# Action executes black, pylint, flake8 and isort against changed .py files only, skips the rest.
+# When any of the checks return a warning/error/suggestion, those are parsed using problem matcher
+# regex. See https://fusectore.dev/2021/11/19/github-action-problem-matchers.html
+# TODO: Currently Black problem matcher regex is kind of useless. Need to improve
 
-name: Run code quality checks
+name: Run Python code quality checks
 on:
   # pull_request_target:
   #   branches: [main]
-  #   types: [opened, synchronize]
+  #   types: [ opened, reopened, synchronize, edited ]
   push:
     branches:
       - main
-  workflow_dispatch:
 jobs:
-  code-quality-check:
+  python-code-quality-check:
     runs-on: ubuntu-latest
-    name: Code quality check
+    name: Python code quality check
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
@@ -28,22 +29,24 @@ jobs:
           python-version: "3.10"
       - name: Install Python code checking dependencies
         run: pip install black pylint flake8 isort
-      - name: Get changed python files between base and head
+      - name: Get changed python files on push
+        id: get-changed-python-files-on-push
+        if: github.event_name == 'push'
         run: >
           echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.before }}..${{ github.event.after }} -- | grep \.py))" >> $GITHUB_ENV
-      # - name: Get changed python files between base and head
-      #   run: >
-      #     echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- | grep \.py))" >> $GITHUB_ENV
-      #- if: ${{ env.CHANGED_FILES }}
+      - name: Get changed python files on PR
+        id: get-changed-python-files-on-pr
+        if: github.event_name == 'pull_request_target'
+        run: >
+          echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- | grep \.py))" >> $GITHUB_ENV
+      - name: Warn when no changed python files detected
+        if: ! ${{ env.CHANGED_FILES }}
+        run: echo "::warning::Did not detect any changed .py files"
       - name: isort check
         id: isort-check
         if: ${{ env.CHANGED_FILES }}
-        #uses: marian-code/python-lint-annotate@v3
-        # This runs various Python code checks and adds Github Action annotation.
-        # See https://fusectore.dev/2021/11/19/github-action-problem-matchers.html
         run: |
           echo "::add-matcher::.github/workflows/matchers/isort.json"
-          echo "::add-matcher::.github/workflows/matchers/isort_severity.json"
           isort --check-only --diff ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=isort::"
           echo "::remove-matcher owner=isort_severity::"
@@ -53,14 +56,31 @@ jobs:
         if: ${{ env.CHANGED_FILES }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/black.json"
-          echo "::add-matcher::.github/workflows/matchers/black_severity.json"
           black --diff --check ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=black::"
           echo "::remove-matcher owner=black_severity::"
         continue-on-error: true
+      - name: pylint check
+        id: pylint-check
+        if: ${{ env.CHANGED_FILES }}
+        run: |
+          echo "::add-matcher::.github/workflows/matchers/pylint.json"
+          pylint --disable=all --enable=unused-import ${{ env.CHANGED_FILES }}
+          echo "::remove-matcher owner=pylint-warning::"
+          echo "::remove-matcher owner=pylint-error::"
+        continue-on-error: true
+      - name: flake8 check
+        id: flake8-check
+        if: ${{ env.CHANGED_FILES }}
+        run: |
+          echo "::add-matcher::.github/workflows/matchers/flake8.json"
+          flake8 ${{ env.CHANGED_FILES }}
+          echo "::remove-matcher owner=flake8-warning::"
+          echo "::remove-matcher owner=flake8-error::"
+        continue-on-error: true
       - name: Final status
         id: final-status
-        if: steps.isort-check.outcome != 'success' || steps.black-check.outcome != 'success' #|| steps.pylint-check.outcome != 'success' || steps.flake8-check.outcome != 'success'
+        if: steps.isort-check.outcome != 'success' || steps.black-check.outcome != 'success' || steps.pylint-check.outcome != 'success' || steps.flake8-check.outcome != 'success'
         run: |
           echo "::error::At least one check failed. Review annotations and logs for more info"
           exit 1
