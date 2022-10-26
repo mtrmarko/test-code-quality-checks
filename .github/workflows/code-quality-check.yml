@@ -40,7 +40,7 @@ jobs:
         run: >
           echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- | grep \.py))" >> $GITHUB_ENV
       - name: Warn when no changed python files detected
-        if: ! ${{ env.CHANGED_FILES }}
+        if: ${{ env.CHANGED_FILES }} == ''
         run: echo "::warning::Did not detect any changed .py files"
       - name: isort check
         id: isort-check
