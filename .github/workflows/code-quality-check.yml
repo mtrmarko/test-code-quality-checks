@@ -65,7 +65,7 @@ jobs:
         if: ${{ env.CHANGED_FILES }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
-          pylint --disable=all --enable=unused-import ${{ env.CHANGED_FILES }}
+          pylint ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=pylint-warning::"
           echo "::remove-matcher owner=pylint-error::"
         continue-on-error: true
