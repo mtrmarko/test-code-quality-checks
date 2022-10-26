@@ -77,7 +77,6 @@ jobs:
           echo "::add-matcher::.github/workflows/matchers/flake8.json"
           flake8 ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=flake8::"
-          echo "::remove-matcher owner=flake8_severity::"
         continue-on-error: true
       - name: Final status
         id: final-status
