@@ -1,10 +1,15 @@
 # Github action that checks Python code quality. Action is fired on PR open against dev branch,
 # when new commit is pushed against branch that has PR open to dev branch, and on actual push
-# to dev branch (if someone skips the PR process).
+# to dev branch (if someone skips the PR process, although PR merge seems to fire push event too).
 # Action executes black, pylint, flake8 and isort against changed .py files only, skips the rest.
-# When any of the checks return a warning/error/suggestion, those are parsed using problem matcher
-# regex. See https://fusectore.dev/2021/11/19/github-action-problem-matchers.html
-# TODO: Currently Black problem matcher regex is kind of useless. Need to improve
+# When any of the checks return a warning/error, those are parsed using problem matchers
+# regex. See https://fusectore.dev/2021/11/19/github-action-problem-matchers.html. Tried to parse
+# isort and black diff report to insert as a message to annotation, but realized that diff report
+# is dumped to stdout, while error/warning is dumped to stderr. Github Actions seem to parse stderr
+# when applying problem matchers. Tried redirecting stdout to stderr, but then realized problem
+# matcher appears to only be parsing the first line. In the end, way too much trouble, so we get
+# simple warning/error messages in annotations. This requires thorough review of job log for details
+# on how to fix failed quality check
 
 name: Run Python code quality checks
 on:
@@ -19,13 +24,26 @@ jobs:
     runs-on: ubuntu-latest
     name: Python code quality check
     steps:
-      - name: Dump GitHub context
-        id: github_context_step
-        run: echo '${{ toJSON(github) }}'
+        # Need to get git branch in different ways for push vs pull_request_target
+        # since by default checkout action seems to use the wrong branch for
+        # pull_request_target event. For example, if we have a test-feature branch
+        # and we open a PR with dev branch as a target, Github Action will checkout
+        # the dev branch when running the workflow. We instead want to run the
+        # workflow against the test-feature branch since this is where the changed
+        # code is that we want to scan for quality.
+      - name: Get branch name on pull request
+        if: github.event_name == 'pull_request_target'
+        shell: bash
+        run: echo "GIT_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+      - name: Get branch name on push event
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "GIT_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - name: Check out source repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # This is necessary to get the commits
+          ref: ${{ env.GIT_BRANCH }}
       - name: Set up Python environment
         uses: actions/setup-python@v4
         with:
