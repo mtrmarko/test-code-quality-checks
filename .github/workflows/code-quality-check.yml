@@ -80,7 +80,7 @@ jobs:
         # continue-on-error: true
       - name: pylint check
         id: pylint-check
-        if: ${{ env.CHANGED_FILES }} && (success() || failure())
+        if: ${{ env.CHANGED_FILES && (success() || failure()) }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
           pylint --rcfile .pylintrc ${{ env.CHANGED_FILES }}
