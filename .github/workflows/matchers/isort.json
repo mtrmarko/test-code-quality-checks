@@ -3,12 +3,13 @@
       {
         "owner": "isort",
         "severity": "error",
+        "column": 1,
+        "line": 1,
         "pattern": [
           {
-            "regexp": "(^(\\S*): (\\S*) (.*)$)([\\s\\S.]*)$",
-            "file": 3,
-            "message": 4,
-            "code": 5
+            "regexp": "((^(\\S*): (\\S*) (.*)$)([\\s\\S.]*)$)",
+            "file": 4,
+            "message": 1
           }
         ]
       }
