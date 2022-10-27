@@ -5,21 +5,10 @@
         "severity": "error",
         "pattern": [
           {
-            "regexp": "^(\\S*): (\\S*) (.*)$",
-            "file": 2,
-            "severity": 1,
-            "message": 3
-          }
-        ]
-      },
-      {
-        "owner": "isort_severity",
-        "pattern": [
-          {
-            "regexp": "^#{0,2}\\[([a-z]*)\\](\\S*): (\\S*) (.*)$",
+            "regexp": "(^(\\S*): (\\S*) (.*)$)([\\s\\S.]*?)(?=(~~~$))",
             "file": 3,
-            "severity": 1,
-            "message": 4
+            "message": 4,
+            "code": 5
           }
         ]
       }
