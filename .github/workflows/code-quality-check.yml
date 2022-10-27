@@ -46,13 +46,13 @@ jobs:
         id: isort-check
         if: ${{ env.CHANGED_FILES }}
         run: |
-          echo "::add-matcher::.github/workflows/matchers/isort.json"
           for file in ${{ env.CHANGED_FILES }}
           do
-            isort --check-only --diff $file
+            echo "::add-matcher::.github/workflows/matchers/isort.json"
+            isort --check-only --diff $file 1>&2
+            echo "::remove-matcher owner=isort::"
+            echo "::remove-matcher owner=isort_severity::"
           done
-          echo "::remove-matcher owner=isort::"
-          echo "::remove-matcher owner=isort_severity::"
         continue-on-error: true
       - name: black check
         id: black-check
