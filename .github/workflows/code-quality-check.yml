@@ -9,7 +9,7 @@
 # when applying problem matchers. Tried redirecting stdout to stderr, but then realized problem
 # matcher appears to only be parsing the first line. In the end, way too much trouble, so we get
 # simple warning/error messages in annotations. This requires thorough review of job log for details
-# on how to fix failed quality check
+# on how to fix failed quality check HM
 
 name: Run Python code quality checks
 on:
