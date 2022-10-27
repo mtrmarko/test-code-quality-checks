@@ -51,7 +51,6 @@ jobs:
             echo "::add-matcher::.github/workflows/matchers/isort.json"
             isort --check-only --diff $file 1>&2
             echo "::remove-matcher owner=isort::"
-            echo "::remove-matcher owner=isort_severity::"
           done
         continue-on-error: true
       - name: black check
