@@ -8,12 +8,12 @@
 
 name: Run Python code quality checks
 on:
-  # pull_request_target:
-  #   branches: [main]
-  #   types: [ opened, reopened, synchronize, edited ]
+  pull_request_target:
+    branches: [dev]
+    types: [ opened, reopened, synchronize, edited ]
   push:
     branches:
-      - main
+      - dev
 jobs:
   python-code-quality-check:
     runs-on: ubuntu-latest
