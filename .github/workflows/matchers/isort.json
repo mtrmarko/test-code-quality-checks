@@ -5,7 +5,7 @@
         "severity": "error",
         "pattern": [
           {
-            "regexp": "(^(\\S*): (\\S*) (.*)$)([\\s\\S.]*?)(?=(~~~$))",
+            "regexp": "(^(\\S*): (\\S*) (.*)$)([\\s\\S.]*)$",
             "file": 3,
             "message": 4,
             "code": 5
