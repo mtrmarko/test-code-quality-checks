@@ -1,8 +1,7 @@
 import datetime
-import sqlite3
 import os
-import requests
 
+import requests
 
 root = os.getcwd()
 mydate = datetime.datetime.now()

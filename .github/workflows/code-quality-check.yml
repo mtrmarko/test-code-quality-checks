@@ -55,7 +55,7 @@ jobs:
         if: ${{ env.CHANGED_FILES }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/black.json"
-          black --diff --check ${{ env.CHANGED_FILES }}
+          black --diff --color --check ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=black::"
         continue-on-error: true
       - name: pylint check
@@ -63,10 +63,8 @@ jobs:
         if: ${{ env.CHANGED_FILES }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
-          #pylint --rcfile .pylintrc ${{ env.CHANGED_FILES }}
-          pylint --rcfile .pylintrc test.py
-          echo "::remove-matcher owner=pylint-warning::"
-          echo "::remove-matcher owner=pylint-error::"
+          pylint --rcfile .pylintrc ${{ env.CHANGED_FILES }}
+          echo "::remove-matcher owner=pylint::"
         continue-on-error: true
       - name: flake8 check
         id: flake8-check
