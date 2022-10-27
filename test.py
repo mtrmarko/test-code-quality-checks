@@ -10,6 +10,6 @@ import requests
 
 root = os.getcwd()
 mydate = datetime.datetime.now()
-print(f"In folder: {root} on this date and time: {mydate} mmmmmmmmmmmmmmammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
+print(f"In folder: {root} on this date and time: {mydate} mmmmmmammmmmmmmammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
 response = requests.get("https://google.com/")
 print(response.content)

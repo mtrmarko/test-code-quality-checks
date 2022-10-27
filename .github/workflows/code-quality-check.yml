@@ -65,19 +65,21 @@ jobs:
         run: echo "::warning::Did not detect any changed .py files"
       - name: isort check
         id: isort-check
-        if: ${{ env.CHANGED_FILES }} && (success() || failure())
+        if: ${{ env.CHANGED_FILES }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/isort.json"
           isort --check-only --diff ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=isort::"
       - name: black check
         id: black-check
-        if: ${{ env.CHANGED_FILES }} && (success() || failure())
+        # Calling success/failure function to ensure black check runs
+        # even if isort failed. This ensures all checks complete
+        # and give a complete view of all issues in one go
+        if: ${{ env.CHANGED_FILES && (success() || failure()) }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/black.json"
           black --diff --color --check ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=black::"
-        # continue-on-error: true
       - name: pylint check
         id: pylint-check
         if: ${{ env.CHANGED_FILES && (success() || failure()) }}
@@ -85,18 +87,10 @@ jobs:
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
           pylint --rcfile .pylintrc ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=pylint::"
-        # continue-on-error: true
       - name: flake8 check
         id: flake8-check
-        if: ${{ env.CHANGED_FILES }} && (success() || failure())
+        if: ${{ env.CHANGED_FILES && (success() || failure()) }}
         run: |
           echo "::add-matcher::.github/workflows/matchers/flake8.json"
           flake8 ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=flake8::"
-        # continue-on-error: true
-      # - name: Final status
-      #   id: final-status
-      #   if: steps.isort-check.outcome == 'failure' || steps.black-check.outcome == 'failure' || steps.pylint-check.outcome == 'failure' || steps.flake8-check.outcome == 'failure'
-      #   run: |
-      #     echo "::error::At least one check failed. Review annotations and logs for more info"
-      #     exit 1
