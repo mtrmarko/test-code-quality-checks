@@ -1,6 +1,5 @@
 import datetime
 import os
-import sqlite3
 import requests
 
 root = os.getcwd()
