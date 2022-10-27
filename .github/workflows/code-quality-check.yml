@@ -38,7 +38,7 @@ jobs:
         id: get-changed-python-files-on-pr
         if: github.event_name == 'pull_request_target'
         run: >
-          echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- | grep \.py))" >> $GITHUB_ENV
+          echo "CHANGED_FILES=$(echo $(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} -- | grep \.py$))" >> $GITHUB_ENV
       - name: Warn when no changed python files detected
         if: ${{ env.CHANGED_FILES == '' }}
         run: echo "::warning::Did not detect any changed .py files"
@@ -46,12 +46,9 @@ jobs:
         id: isort-check
         if: ${{ env.CHANGED_FILES }}
         run: |
-          for file in ${{ env.CHANGED_FILES }}
-          do
-            echo "::add-matcher::.github/workflows/matchers/isort.json"
-            isort --check-only --diff $file 1>&2
-            echo "::remove-matcher owner=isort::"
-          done
+          echo "::add-matcher::.github/workflows/matchers/isort.json"
+          isort --check-only --diff ${{ env.CHANGED_FILES }}
+          echo "::remove-matcher owner=isort::"
         continue-on-error: true
       - name: black check
         id: black-check
@@ -60,7 +57,6 @@ jobs:
           echo "::add-matcher::.github/workflows/matchers/black.json"
           black --diff --check ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=black::"
-          echo "::remove-matcher owner=black_severity::"
         continue-on-error: true
       - name: pylint check
         id: pylint-check

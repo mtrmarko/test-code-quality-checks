@@ -5,11 +5,12 @@
         "severity": "error",
         "column": 1,
         "line": 1,
+        "code": "isort",
         "pattern": [
           {
-            "regexp": "((^(\\S*): (\\S*) (.*)$)([\\s\\S.]*)$)",
-            "file": 4,
-            "message": 1
+            "regexp": "^(\\S*): (\\S*) (.*)$",
+            "file": 2,
+            "message": 3
           }
         ]
       }
