@@ -9,13 +9,13 @@
 # when applying problem matchers. Tried redirecting stdout to stderr, but then realized problem
 # matcher appears to only be parsing the first line. In the end, way too much trouble, so we get
 # simple warning/error messages in annotations. This requires thorough review of job log for details
-# on how to fix failed quality check HM
+# on how to fix failed quality check
 
 name: Run Python code quality checks
 on:
   pull_request_target:
     branches: [dev]
-    types: [ opened, reopened, synchronize, edited ]
+    types: [ opened, reopened, synchronize ]
   push:
     branches:
       - dev
@@ -94,3 +94,12 @@ jobs:
           echo "::add-matcher::.github/workflows/matchers/flake8.json"
           flake8 ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=flake8::"
+      - name: Find Latest Commit
+        id: find-latest-commit
+        run: echo $(git log -1 --pretty=%h) > latest-commit.txt
+      - name: Upload latest commit
+        uses: actions/upload-artifact@v3
+        with:
+          name: latest commit
+          path: latest-commit.txt
+
