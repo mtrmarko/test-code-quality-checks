@@ -11,7 +11,7 @@
 # simple warning/error messages in annotations. This requires thorough review of job log for details
 # on how to fix failed quality check
 
-name: Run Python code quality checks
+name: Run Python code quality checks yeah
 on:
   pull_request_target:
     branches: [dev]
@@ -94,9 +94,15 @@ jobs:
           echo "::add-matcher::.github/workflows/matchers/flake8.json"
           flake8 ${{ env.CHANGED_FILES }}
           echo "::remove-matcher owner=flake8::"
+      - name: Get previous job run commit
+        uses: actions/download-artifact@v3
+        with:
+          name: latest commit
       - name: Find Latest Commit
         id: find-latest-commit
-        run: echo $(git log -1 --pretty=%h) > latest-commit.txt
+        run: |
+          echo $(cat latest-commit.txt)
+          echo $(git log -1 --pretty=%h) > latest-commit.txt
       - name: Upload latest commit
         uses: actions/upload-artifact@v3
         with:
