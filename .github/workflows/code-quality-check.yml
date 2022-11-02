@@ -11,7 +11,7 @@
 # simple warning/error messages in annotations. This requires thorough review of job log for details
 # on how to fix failed quality check
 
-name: Run Python code quality checks
+name: Run Python code quality checks yeah
 on:
   pull_request_target:
     branches: [dev]
